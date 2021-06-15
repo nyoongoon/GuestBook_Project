@@ -26,6 +26,13 @@ public class ChatListServlet extends HttpServlet {
 			response.getWriter().write(getToday());
 		}else if (listType.equals("ten")) {
 			response.getWriter().write(getTen());
+		}else {
+			try {
+				Integer.parseInt(listType);
+				response.getWriter().write(getID(listType));
+			}catch(Exception e) {
+				response.getWriter().write("");
+			}
 		}
 	}
 
@@ -52,7 +59,7 @@ public class ChatListServlet extends HttpServlet {
 		StringBuffer result = new StringBuffer("");
 		result.append("{\"result\":[");
 		ChatDAO chatDAO = new ChatDAO();
-		ArrayList<Chat> chatList = chatDAO.getChatListByRecent(10);
+		ArrayList<Chat> chatList = chatDAO.getChatListByRecent(5);
 		for (int i = 0; i < chatList.size(); i++) {
 			result.append("[{\"value\": \"" + chatList.get(i).getChatName() + "\"},");
 			result.append("{\"value\": \"" + chatList.get(i).getChatContent() + "\"},");
@@ -65,12 +72,12 @@ public class ChatListServlet extends HttpServlet {
 		return result.toString();
 	}
 	
-	public String getID(String chatID) {
+	public String getID(String last) {
 		// JSON 사용
 		StringBuffer result = new StringBuffer("");
 		result.append("{\"result\":[");
 		ChatDAO chatDAO = new ChatDAO();
-		ArrayList<Chat> chatList = chatDAO.getChatListByRecent(chatID);
+		ArrayList<Chat> chatList = chatDAO.getChatListByRecent(last);
 		for (int i = 0; i < chatList.size(); i++) {
 			result.append("[{\"value\": \"" + chatList.get(i).getChatName() + "\"},");
 			result.append("{\"value\": \"" + chatList.get(i).getChatContent() + "\"},");
@@ -79,7 +86,7 @@ public class ChatListServlet extends HttpServlet {
 				result.append(", ");
 			}
 		}
-		result.append("], \"last\":\"" + chatList.get(chatList.size() - 1).getChatID() + "\"}");
+		result.append("], \"lastID\":\"" + chatList.get(chatList.size() - 1).getChatID() + "\"}");
 		return result.toString();
 	}
 }

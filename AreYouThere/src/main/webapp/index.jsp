@@ -12,6 +12,7 @@
 <script src="js/bootstrap.js"></script>
 <script type="text/javascript">
 	var lastID = 0;
+	
 	function submitFunction() {
 		var chatName = $('#chatName').val();
 		var chatContent = $('#chatContent').val();
@@ -48,12 +49,16 @@
 			url : "./chatListServlet",
 			data : {
 				listType: type,
+				//ajax 데이터 추가
+				//lastID: lastID
 			},
 			success: function(data) {
 				var parsed = JSON.parse(data);
 				var result = parsed.result;
+				
 				for(var i = 0; i < result.length; i++){
 					addChat(result[i][0].value, result[i][1].value, result[i][2].value);
+					
 				}
 				lastID = Number(parsed.last);
 				 
@@ -82,12 +87,43 @@
 		 					'</div>' +
 		 					'</div>' +
 		 					'<hr>');
+		
+			
+					$('#chatList').scrollTop($('#chatList')[0].clientHeight);
+			
+		
 	}
+	
+	
+	
+	//스크롤을 맨 아래로	
+	//$('#chatList').scrollTop($('#chatList')[0].scrollHeight);
+	
+	//스크롤을 올려서 데이터 가져오기
+	
+	//페이지가 로딩이 완료됐을 경우 실행하라고 알려줌
+	$(document).ready(function(){
+        $('#chatList').scroll(function(){
+        var scrollT = $(this).scrollTop(); //스크롤바의 상단위치
+      	
+        if(scrollT < 1) { // 스크롤바가 아래 쪽에 위치할 때
+        	//chatListFunction('ID'); lastID 매개변수로 보내야 함
+        	chatListFunction('ten');
+        }
+    });
+});
+
+	
+	$(document).ready(function(){
+		chatListFunction('ten');
+		
+	});
+
+
+
+	
 </script>
-<script type="text/javascript">
-	var divdiv = document.getElementById("chat");			
-	divdiv.scrollTop = divdiv.scrollHeight;								
-</script>
+
 </head>
 <body>
 	<div class="container">
@@ -105,9 +141,13 @@
 							<div class="clearfix"></div>
 						</div>
 						<div id="chat" class="panel-collapse collapse in">
+							
+							
 							<div id="chatList" class="portlet-body chat-widget"
-								style="overflow-y: auto; width: auto; height: 500px;">
-							</div>					
+								style="overflow-y: scroll; width: auto; height: 500px;">
+							</div>		
+							
+										
 						<div class="portlet-footer">
 							<div class="row">
 								<div class="form-group col-xs-4">
@@ -128,11 +168,7 @@
 							</div>
 						</div>
 					</div>
-					<script>
-					    function() {
-					    	document.documentElement.scrollTop = document.body.scrollHeigh;
-					    }
-					</script>
+					
 				</div>
 			</div>
 		</div>
@@ -150,11 +186,7 @@
 		<strong>오류가 발생했습니다.</strong>
 	</div>
 	</div>
-	<script type="text/javascript">
-		$(document).ready(function(){
-			chatListFunction('ten');
-		});
-	</script>
+	
 	
 
 </body>
