@@ -28,7 +28,7 @@ public class ChatDAO {
 		ArrayList<Chat> chatList = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String SQL = "SELECT * FROM CHAT WHERE chatTime > ? ORDER BY chatTime";
+		String SQL = "SELECT * FROM CHAT WHERE chatTime > ? ORDER BY chatTime DESC";
 		try {
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, nowTime);
@@ -65,7 +65,7 @@ public class ChatDAO {
 		ArrayList<Chat> chatList = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String SQL = "SELECT * FROM CHAT WHERE chatID >(SELECT MAX(chatID) - ? FROM CHAT) ORDER BY chatTime";
+		String SQL = "SELECT * FROM CHAT WHERE chatID >(SELECT MAX(chatID) - ? FROM CHAT) ORDER BY chatTime DESC";
 		try {
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, number);
@@ -98,15 +98,15 @@ public class ChatDAO {
 		return chatList;
 	}
 	
-	public ArrayList<Chat> getChatListByRecent(String last){
+	public ArrayList<Chat> getUpdateChatList(String last){
 		ArrayList<Chat> chatList = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String SQL = "SELECT * FROM CHAT WHERE chatID <= ? AND chatId > ? ORDER BY chatTime";
+		String SQL = "SELECT * FROM CHAT WHERE chatID <= ? AND chatId >= ? ORDER BY chatTime DESC";
 		try {
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, Integer.parseInt(last)-5);
-			pstmt.setInt(2, Integer.parseInt(last)-10);
+			pstmt.setInt(1,Integer.parseInt(last)-1);
+			pstmt.setInt(2,Integer.parseInt(last)-5);
 			rs = pstmt.executeQuery();
 			chatList = new ArrayList<Chat>();
 			while(rs.next()) {

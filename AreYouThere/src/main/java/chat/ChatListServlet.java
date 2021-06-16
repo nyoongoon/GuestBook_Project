@@ -20,6 +20,7 @@ public class ChatListServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8");
 		String listType = request.getParameter("listType");
+		
 		if (listType == null || listType.equals("")) {
 			response.getWriter().write("");
 		} else if (listType.equals("today")) {
@@ -72,12 +73,12 @@ public class ChatListServlet extends HttpServlet {
 		return result.toString();
 	}
 	
-	public String getID(String last) {
+	public String getID(String chatID) {
 		// JSON 사용
 		StringBuffer result = new StringBuffer("");
 		result.append("{\"result\":[");
 		ChatDAO chatDAO = new ChatDAO();
-		ArrayList<Chat> chatList = chatDAO.getChatListByRecent(last);
+		ArrayList<Chat> chatList = chatDAO.getUpdateChatList(chatID);
 		for (int i = 0; i < chatList.size(); i++) {
 			result.append("[{\"value\": \"" + chatList.get(i).getChatName() + "\"},");
 			result.append("{\"value\": \"" + chatList.get(i).getChatContent() + "\"},");
@@ -86,7 +87,7 @@ public class ChatListServlet extends HttpServlet {
 				result.append(", ");
 			}
 		}
-		result.append("], \"lastID\":\"" + chatList.get(chatList.size() - 1).getChatID() + "\"}");
+		result.append("], \"last\":\"" + chatList.get(chatList.size() - 1).getChatID() + "\"}");
 		return result.toString();
 	}
 }
