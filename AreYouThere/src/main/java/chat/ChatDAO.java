@@ -1,28 +1,32 @@
 package chat;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 
-public class ChatDAO {
-	private Connection conn;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
+
+public class ChatDAO extends HttpServlet{
+	public Connection conn = null;
+	
 	
 	public ChatDAO() {
-		 
+		
 		try{
-			String dbURL="jdbc:mysql://localhost:3306/ANONYMOUSCHAT";
-			String dbID ="root";
-			String dbPassword = "tjrqls29";
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
+			ServletContext sc = this.getServletContext();
+			conn = (Connection) sc.getAttribute("conn");
 					
 		}catch(Exception e) {
 			e.printStackTrace();
-			
+			System.out.println("DB 예외 발생!");
 		}
 	}
+	
+
+	
 	
 	public ArrayList<Chat> getChatList(String nowTime){
 		ArrayList<Chat> chatList = null;
@@ -54,6 +58,7 @@ public class ChatDAO {
 			try {
 				if(rs!=null) rs.close();
 				if(pstmt!=null) pstmt.close();
+				
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -64,9 +69,14 @@ public class ChatDAO {
 	public ArrayList<Chat> getChatListByRecent(int number){
 		ArrayList<Chat> chatList = null;
 		PreparedStatement pstmt = null;
+		Statement stmt= null;
 		ResultSet rs = null;
+		conn = this.conn;
+		String quary = "USE ANONYMOUSCHAT";
 		String SQL = "SELECT * FROM CHAT WHERE chatID >(SELECT MAX(chatID) - ? FROM CHAT) ORDER BY chatTime DESC";
 		try {
+			stmt = conn.createStatement();
+	        stmt.executeUpdate(quary);
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, number);
 			rs = pstmt.executeQuery();
@@ -91,6 +101,7 @@ public class ChatDAO {
 			try {
 				if(rs!=null) rs.close();
 				if(pstmt!=null) pstmt.close();
+				
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -129,6 +140,7 @@ public class ChatDAO {
 			try {
 				if(rs!=null) rs.close();
 				if(pstmt!=null) pstmt.close();
+				
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -152,6 +164,7 @@ public class ChatDAO {
 			try {
 				if(rs!=null) rs.close();
 				if(pstmt!=null) pstmt.close();
+				
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
